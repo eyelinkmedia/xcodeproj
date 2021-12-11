@@ -106,6 +106,11 @@ public class PBXBuildPhase: PBXContainerItem {
         dictionary["runOnlyForDeploymentPostprocessing"] = .string(CommentedString("\(runOnlyForDeploymentPostprocessing.int)"))
         return dictionary
     }
+
+    override func isEqual(to object: Any?) -> Bool {
+        guard let rhs = object as? PBXBuildPhase else { return false }
+        return isEqual(to: rhs)
+    }
 }
 
 // MARK: - Helpers
@@ -134,6 +139,7 @@ public extension PBXBuildPhase {
     /// Returns the build phase type.
     ///
     /// - Returns: build phase type.
+    @available(*, deprecated, message: "Please use buildPhase property instead")
     func type() -> BuildPhase? {
         buildPhase
     }

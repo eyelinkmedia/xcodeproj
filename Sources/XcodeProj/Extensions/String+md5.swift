@@ -21,18 +21,66 @@
  */
 
 import Foundation
-import XcodeProjCExt
+#if canImport(CryptoKit)
+import CryptoKit
+#endif
 
 extension String {
     var md5: String {
         guard let data = data(using: .utf8, allowLossyConversion: true) else {
-            fatalError("Unable to get UTF-8 string from data")
+            return self
         }
-        return data.withUnsafeBytes { bufferPointer in
-            let castedBuffer = bufferPointer.bindMemory(to: Int8.self)
-            let hex = XCPComputeMD5(castedBuffer.baseAddress, Int32(data.count))!
-            return String(cString: hex, encoding: .ascii)!
+        #if canImport(CryptoKit)
+        if #available(OSX 10.15, *) {
+            return Insecure.MD5.hash(data: data)
+                .withUnsafeBytes { Array($0) }.hexString
+        } else {
+            return data.slowMD5
         }
+        #else
+        return data.slowMD5
+        #endif
+    }
+}
+
+private let charA = UInt8(UnicodeScalar("a").value)
+private let char0 = UInt8(UnicodeScalar("0").value)
+
+private extension DataProtocol {
+    var hexString: String {
+        let hexLen = self.count * 2
+        let ptr = UnsafeMutablePointer<UInt8>.allocate(capacity: hexLen)
+        var offset = 0
+
+        self.regions.forEach { (_) in
+            for i in self {
+                ptr[Int(offset * 2)] = itoh((i >> 4) & 0xF)
+                ptr[Int(offset * 2 + 1)] = itoh(i & 0xF)
+                offset += 1
+            }
+        }
+
+        return String(bytesNoCopy: ptr, length: hexLen, encoding: .utf8, freeWhenDone: true)!
+    }
+
+    func itoh(_ value: UInt8) -> UInt8 {
+        return (value > 9) ? (charA + value - 10) : (char0 + value)
+    }
+}
+
+private extension Data {
+    // Custom md5 for systems without CryptoKit.
+    var slowMD5: String {
+        let message = withUnsafeBytes { bufferPointer in
+            Array(UnsafeBufferPointer(
+                start: bufferPointer.baseAddress?.assumingMemoryBound(to: UInt8.self),
+                count: count
+            ))
+        }
+
+        let MD5Calculator = MD5(message)
+        let MD5Data = MD5Calculator.calculate()
+        return MD5Data.hexString
     }
 }
 

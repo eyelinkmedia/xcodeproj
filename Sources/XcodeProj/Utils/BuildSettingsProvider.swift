@@ -97,6 +97,7 @@ public class BuildSettingsProvider {
     private static func projectAll() -> BuildSettings {
         [
             "ALWAYS_SEARCH_USER_PATHS": "NO",
+            "CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED": "YES",
             "CLANG_ANALYZER_NONNULL": "YES",
             "CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION": "YES_AGGRESSIVE",
             "CLANG_CXX_LANGUAGE_STANDARD": "gnu++14",
@@ -120,6 +121,7 @@ public class BuildSettingsProvider {
             "CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF": "YES",
             "CLANG_WARN_OBJC_LITERAL_CONVERSION": "YES",
             "CLANG_WARN_OBJC_ROOT_CLASS": "YES_ERROR",
+            "CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER": "YES",
             "CLANG_WARN_RANGE_LOOP_ANALYSIS": "YES",
             "CLANG_WARN_STRICT_PROTOTYPES": "YES",
             "CLANG_WARN_SUSPICIOUS_MOVE": "YES",

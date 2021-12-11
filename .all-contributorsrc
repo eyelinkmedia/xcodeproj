@@ -1,0 +1,159 @@
+{
+  "files": [
+    "README.md"
+  ],
+  "imageSize": 100,
+  "commit": false,
+  "contributors": [
+    {
+      "login": "jcolicchio",
+      "name": "Joseph Colicchio",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/2837288?v=4",
+      "profile": "https://joecolicch.io",
+      "contributions": [
+        "ideas"
+      ]
+    },
+    {
+      "login": "deatondg",
+      "name": "deatondg",
+      "avatar_url": "https://avatars0.githubusercontent.com/u/3221590?v=4",
+      "profile": "https://github.com/deatondg",
+      "contributions": [
+        "ideas"
+      ]
+    },
+    {
+      "login": "dflems",
+      "name": "Dan Fleming",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/925850?v=4",
+      "profile": "https://github.com/dflems",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "sascha",
+      "name": "Sascha Schwabbauer",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/895505?v=4",
+      "profile": "https://twitter.com/_SaschaS",
+      "contributions": [
+        "ideas"
+      ]
+    },
+    {
+      "login": "marciniwanicki",
+      "name": "Marcin Iwanicki",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/946649?v=4",
+      "profile": "https://github.com/marciniwanicki",
+      "contributions": [
+        "maintenance"
+      ]
+    },
+    {
+      "login": "adamkhazi",
+      "name": "Adam Khazi",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/9820670?v=4",
+      "profile": "https://github.com/adamkhazi",
+      "contributions": [
+        "maintenance"
+      ]
+    },
+    {
+      "login": "elliottwilliams",
+      "name": "Elliott Williams",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/910198?v=4",
+      "profile": "https://github.com/elliottwilliams",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "muukii",
+      "name": "Muukii",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1888355?v=4",
+      "profile": "http://muukii.app",
+      "contributions": [
+        "content"
+      ]
+    },
+    {
+      "login": "nnsnodnb",
+      "name": "Yuya Oka",
+      "avatar_url": "https://avatars.githubusercontent.com/u/9856514?v=4",
+      "profile": "https://nnsnodnb.github.io",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "keith",
+      "name": "Keith Smiley",
+      "avatar_url": "https://avatars.githubusercontent.com/u/283886?v=4",
+      "profile": "https://smileykeith.com",
+      "contributions": [
+        "content"
+      ]
+    },
+    {
+      "login": "ileitch",
+      "name": "Ian Leitch",
+      "avatar_url": "https://avatars.githubusercontent.com/u/48235?v=4",
+      "profile": "https://github.com/ileitch",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "subdan",
+      "name": "Daniil Subbotin",
+      "avatar_url": "https://avatars.githubusercontent.com/u/410293?v=4",
+      "profile": "https://github.com/subdan",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "flowbe",
+      "name": "Florentin Bekier",
+      "avatar_url": "https://avatars.githubusercontent.com/u/8288625?v=4",
+      "profile": "https://www.florentin.tech",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "CognitiveDisson",
+      "name": "Vadim Smal",
+      "avatar_url": "https://avatars.githubusercontent.com/u/10621118?v=4",
+      "profile": "https://github.com/CognitiveDisson",
+      "contributions": [
+        "bug"
+      ]
+    },
+    {
+      "login": "freddi-kit",
+      "name": "freddi(Yuki Aki)",
+      "avatar_url": "https://avatars.githubusercontent.com/u/13707872?v=4",
+      "profile": "http://freddi.dev",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "KrisRJack",
+      "name": "Kristopher Jackson",
+      "avatar_url": "https://avatars.githubusercontent.com/u/35638500?v=4",
+      "profile": "http://KrisRJack.com",
+      "contributions": [
+        "code"
+      ]
+    }
+  ],
+  "contributorsPerLine": 7,
+  "projectName": "XcodeProj",
+  "projectOwner": "tuist",
+  "repoType": "github",
+  "repoHost": "https://github.com",
+  "skipCi": true
+}

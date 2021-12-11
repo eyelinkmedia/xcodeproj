@@ -134,11 +134,25 @@ public class PBXFileElement: PBXContainerItem, PlistSerializable {
     func fileName() -> String? {
         name ?? path
     }
+
+    override func isEqual(to object: Any?) -> Bool {
+        guard let rhs = object as? PBXFileElement else { return false }
+        return isEqual(to: rhs)
+    }
 }
 
 // MARK: - Helpers
 
 public extension PBXFileElement {
+    /// Returns a file absolute path.
+    ///
+    /// - Parameter sourceRoot: project source root.
+    /// - Returns: file element absolute path.
+    /// - Throws: an error if the absolute path cannot be obtained.
+    func fullPath(sourceRoot: String) throws -> String? {
+        try fullPath(sourceRoot: Path(sourceRoot))?.absolute().string
+    }
+
     /// Returns a file absolute path.
     ///
     /// - Parameter sourceRoot: project source root.
