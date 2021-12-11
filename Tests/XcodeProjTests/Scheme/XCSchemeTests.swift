@@ -8,7 +8,7 @@ final class XCSchemeIntegrationTests: XCTestCase {
         let subject = try XCScheme(path: iosSchemePath)
         assert(scheme: subject)
     }
-    
+
     func test_write_iosScheme() {
         testWrite(from: iosSchemePath,
                   initModel: { try? XCScheme(path: $0) },
@@ -43,11 +43,13 @@ final class XCSchemeIntegrationTests: XCTestCase {
                 buildableName: "",
                 blueprintName: ""
             ),
-            skippedTests: []
+            skippedTests: [],
+            selectedTests: []
         )
         let subject = reference.xmlElement()
         XCTAssertNil(subject.attributes["parallelizable"])
         XCTAssertNil(subject.attributes["testExecutionOrdering"])
+        XCTAssertNil(subject.attributes["useTestSelectionWhitelist"])
     }
 
     func test_write_testableReferenceAttributesValues() {
@@ -61,12 +63,47 @@ final class XCSchemeIntegrationTests: XCTestCase {
                 buildableName: "",
                 blueprintName: ""
             ),
-            skippedTests: []
+            skippedTests: [],
+            selectedTests: [],
+            useTestSelectionWhitelist: true
         )
         let subject = reference.xmlElement()
         XCTAssertEqual(subject.attributes["skipped"], "NO")
         XCTAssertEqual(subject.attributes["parallelizable"], "YES")
+        XCTAssertEqual(subject.attributes["useTestSelectionWhitelist"], "YES")
         XCTAssertEqual(subject.attributes["testExecutionOrdering"], "random")
+    }
+
+    func test_write_testableReferenceSelectedTests() {
+        // Given
+        let reference = XCScheme.TestableReference(
+            skipped: false,
+            parallelizable: true,
+            randomExecutionOrdering: true,
+            buildableReference: XCScheme.BuildableReference(
+                referencedContainer: "",
+                blueprint: PBXObject(),
+                buildableName: "",
+                blueprintName: ""
+            ),
+            skippedTests: [],
+            selectedTests: [
+                .init(identifier: "foo"),
+            ],
+            useTestSelectionWhitelist: true
+        )
+        let subject = reference.xmlElement()
+
+        // When
+        let selectedTests = subject.children.first { $0.name == "SelectedTests" }
+        let skippedTests = subject.children.first { $0.name == "SkippedTests" }
+        let firstSelectedTest = selectedTests?.children.first { $0.name == "Test" }
+
+        // Then
+        XCTAssertNil(skippedTests)
+        XCTAssertNotNil(selectedTests)
+        XCTAssertNotNil(firstSelectedTest)
+        XCTAssertEqual(firstSelectedTest?.attributes["Identifier"], "foo")
     }
 
     func test_write_testPlanReferenceDefaultAttributesValuesAreOmitted() {
@@ -84,31 +121,128 @@ final class XCSchemeIntegrationTests: XCTestCase {
         XCTAssertEqual(subject.attributes["reference"], "to_some_paht")
         XCTAssertEqual(subject.attributes["default"], "YES")
     }
-    
+
     func test_testAction_pathRunnable_serializingAndDeserializing() throws {
         // Given
         let filePath = "/usr/bin/foo"
         let pathRunnable = XCScheme.PathRunnable(filePath: filePath, runnableDebuggingMode: "0")
         let subject = XCScheme.LaunchAction(runnable: nil, buildConfiguration: "Debug", pathRunnable: pathRunnable)
-        
+
         // When
         let element = subject.xmlElement()
         let reconstructedSubject = try XCScheme.LaunchAction(element: element)
-        
+
         // Then
         XCTAssertEqual(subject, reconstructedSubject)
     }
-    
+
     func test_testAction_serializingAndDeserializing() throws {
         // Given
         let subject = XCScheme.TestAction(buildConfiguration: "Debug", macroExpansion: nil)
-        
+
         // When
         let element = subject.xmlElement()
         let reconstructedSubject = try XCScheme.TestAction(element: element)
-        
+
         // Then
         XCTAssertEqual(subject, reconstructedSubject)
+    }
+
+    func test_launchAction_customLLDBInitFile_serializingAndDeserializing() throws {
+        // Given
+        let lldbInitPath = "/Users/user/custom/.lldbinit"
+        let subject = XCScheme.LaunchAction(runnable: nil, buildConfiguration: "Debug", customLLDBInitFile: lldbInitPath)
+
+        // When
+        let element = subject.xmlElement()
+        let reconstructedSubject = try XCScheme.LaunchAction(element: element)
+
+        // Then
+        XCTAssertEqual(subject, reconstructedSubject)
+    }
+
+    func test_testAction_customLLDBInitFile_serializingAndDeserializing() throws {
+        // Given
+        let lldbInitPath = "/Users/user/custom/.lldbinit"
+        let subject = XCScheme.TestAction(buildConfiguration: "Debug", macroExpansion: nil, customLLDBInitFile: lldbInitPath)
+
+        // When
+        let element = subject.xmlElement()
+        let reconstructedSubject = try XCScheme.TestAction(element: element)
+
+        // Then
+        XCTAssertEqual(subject, reconstructedSubject)
+    }
+
+    func test_scheme_remoteRunnable() throws {
+        // Given / When
+        let subject = try XCScheme(path: watchAppSchemePath)
+
+        // Then
+        let launchAction = try XCTUnwrap(subject.launchAction)
+        let remoteRunnable = try XCTUnwrap(launchAction.runnable as? XCScheme.RemoteRunnable)
+        XCTAssertEqual(remoteRunnable.bundleIdentifier, "com.apple.Carousel")
+        XCTAssertEqual(remoteRunnable.runnableDebuggingMode, "2")
+        XCTAssertEqual(remoteRunnable.remotePath, "/AppWithExtensions")
+    }
+
+    func test_launchAction_remoteRunnable_serializingAndDeserializing() throws {
+        // Given
+        let buildableReference = try buildableReferenceWithStringBluePrint()
+        let remoteRunnable = XCScheme.RemoteRunnable(buildableReference: buildableReference,
+                                                     bundleIdentifier: "io.tuist",
+                                                     remotePath: "/Some/Path")
+        let subject = XCScheme.LaunchAction(runnable: remoteRunnable,
+                                            buildConfiguration: "Debug")
+
+        // When
+        let element = subject.xmlElement()
+        let reconstructedSubject = try XCScheme.LaunchAction(element: element)
+
+        // Then
+        XCTAssertEqual(reconstructedSubject, subject)
+    }
+
+    func test_runnable_equtable() throws {
+        // Given
+        let buildableReferenceA = try buildableReferenceWithStringBluePrint(name: "A")
+        let buildableReferenceB = try buildableReferenceWithStringBluePrint(name: "B")
+        let remoteRunnableA1 = XCScheme.RemoteRunnable(buildableReference: buildableReferenceA,
+                                                       bundleIdentifier: "io.tuist",
+                                                       runnableDebuggingMode: "0",
+                                                       remotePath: "/Some/Path")
+        let remoteRunnableA2 = XCScheme.RemoteRunnable(buildableReference: buildableReferenceA,
+                                                       bundleIdentifier: "io.tuist",
+                                                       runnableDebuggingMode: "0",
+                                                       remotePath: "/Some/Path")
+        let remoteRunnableA3 = XCScheme.RemoteRunnable(buildableReference: buildableReferenceA,
+                                                       bundleIdentifier: "io.another.tuist",
+                                                       runnableDebuggingMode: "2",
+                                                       remotePath: "/Some/Other/Path")
+        let remoteRunnableB = XCScheme.RemoteRunnable(buildableReference: buildableReferenceB,
+                                                      bundleIdentifier: "io.tuist",
+                                                      runnableDebuggingMode: "0",
+                                                      remotePath: "/Some/Path")
+
+        let runnableA1 = XCScheme.Runnable(buildableReference: buildableReferenceA,
+                                           runnableDebuggingMode: "0")
+        let runnableA2 = XCScheme.Runnable(buildableReference: buildableReferenceA,
+                                           runnableDebuggingMode: "0")
+        let runnableA3 = XCScheme.Runnable(buildableReference: buildableReferenceA,
+                                           runnableDebuggingMode: "2")
+        let runnableB = XCScheme.Runnable(buildableReference: buildableReferenceB,
+                                          runnableDebuggingMode: "0")
+
+        // When / Then
+        XCTAssertEqual(remoteRunnableA1, remoteRunnableA2)
+        XCTAssertNotEqual(remoteRunnableA1, remoteRunnableA3)
+        XCTAssertNotEqual(remoteRunnableA1, remoteRunnableB)
+        XCTAssertNotEqual(remoteRunnableA1, runnableA1)
+
+        XCTAssertEqual(runnableA1, runnableA2)
+        XCTAssertNotEqual(runnableA1, runnableA3)
+        XCTAssertNotEqual(runnableA1, runnableB)
+        XCTAssertNotEqual(runnableA1, remoteRunnableA1)
     }
 
     // MARK: - Private
@@ -143,6 +277,7 @@ final class XCSchemeIntegrationTests: XCTestCase {
         XCTAssertEqual(scheme.testAction?.testables.first?.skipped, false)
         XCTAssertEqual(scheme.testAction?.testables.first?.parallelizable, false)
         XCTAssertEqual(scheme.testAction?.testables.first?.randomExecutionOrdering, false)
+        XCTAssertEqual(scheme.testAction?.testables.first?.useTestSelectionWhitelist, false)
         XCTAssertEqual(scheme.testAction?.testables.first?.buildableReference.buildableIdentifier, "primary")
         XCTAssertEqual(scheme.testAction?.testables.first?.buildableReference.blueprintIdentifier, "23766C251EAA3484007A9026")
         XCTAssertEqual(scheme.testAction?.testables.first?.buildableReference.buildableName, "iOSTests.xctest")
@@ -170,6 +305,7 @@ final class XCSchemeIntegrationTests: XCTestCase {
         XCTAssertEqual(scheme.testAction?.enableUBSanitizer, false)
         XCTAssertEqual(scheme.testAction?.disableMainThreadChecker, false)
         XCTAssertEqual(scheme.testAction?.additionalOptions.isEmpty, true)
+        XCTAssertEqual(scheme.launchAction?.storeKitConfigurationFileReference?.identifier, "../../Configuration.storekit")
 
         let testEnvironmentVariables = XCTAssertNotNilAndUnwrap(scheme.testAction?.environmentVariables)
         XCTAssertEqual(testEnvironmentVariables.count, 1)
@@ -273,6 +409,7 @@ final class XCSchemeIntegrationTests: XCTestCase {
         XCTAssertTrue(!launchCLIArgs.arguments.isEmpty)
         XCTAssertEqual(launchCLIArgs.arguments[0].name, "MyLaunchArgument")
         XCTAssertTrue(launchCLIArgs.arguments[0].enabled)
+        XCTAssertNil(scheme.launchAction?.customLLDBInitFile)
     }
 
     private func assert(minimalScheme scheme: XCScheme) {
@@ -333,6 +470,7 @@ final class XCSchemeIntegrationTests: XCTestCase {
         XCTAssertEqual(scheme.launchAction?.disableMainThreadChecker, false)
         XCTAssertEqual(scheme.launchAction?.stopOnEveryMainThreadCheckerIssue, false)
         XCTAssertEqual(scheme.launchAction?.additionalOptions.isEmpty, true)
+        XCTAssertNil(scheme.launchAction?.storeKitConfigurationFileReference)
 
         let launchEnvironmentVariables = XCTAssertNotNilAndUnwrap(scheme.launchAction?.environmentVariables)
         XCTAssertEqual(launchEnvironmentVariables.count, 1)
@@ -360,13 +498,30 @@ final class XCSchemeIntegrationTests: XCTestCase {
         XCTAssertNil(scheme.archiveAction?.customArchiveName)
     }
 
+    private func buildableReferenceWithStringBluePrint(name: String = "App") throws -> XCScheme.BuildableReference {
+        // To allow performing comparisons when serializing / deserializing we need a
+        // buildable reference that contains a `.string` blue print
+        let buildableReference = XCScheme.BuildableReference(
+            referencedContainer: "\(name).xcodeproj",
+            blueprint: PBXObject(),
+            buildableName: name,
+            blueprintName: name
+        )
+        let xmlElement = buildableReference.xmlElement()
+        return try XCScheme.BuildableReference(element: xmlElement)
+    }
+
     private var iosSchemePath: Path {
-        return fixturesPath() + "iOS/Project.xcodeproj/xcshareddata/xcschemes/iOS.xcscheme"
+        fixturesPath() + "iOS/Project.xcodeproj/xcshareddata/xcschemes/iOS.xcscheme"
     }
 
     private var minimalSchemePath: Path {
         // Not strictly minimal in the sense that it specifies the least amount of information to be valid,
         // but minimal in the sense it doesn't have most of the standard elements and attributes.
-        return fixturesPath() + "Schemes/MinimalInformation.xcscheme"
+        fixturesPath() + "Schemes/MinimalInformation.xcscheme"
+    }
+
+    private var watchAppSchemePath: Path {
+        fixturesPath() + "iOS/AppWithExtensions/AppWithExtensions.xcodeproj/xcshareddata/xcschemes/WatchApp.xcscheme"
     }
 }

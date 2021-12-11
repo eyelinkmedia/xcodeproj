@@ -16,7 +16,7 @@ public final class PBXProject: PBXObject {
             buildConfigurationListReference = newValue.reference
         }
         get {
-            return buildConfigurationListReference.getObject()
+            buildConfigurationListReference.getObject()
         }
     }
 
@@ -41,7 +41,7 @@ public final class PBXProject: PBXObject {
             mainGroupReference = newValue.reference
         }
         get {
-            return mainGroupReference.getObject()
+            mainGroupReference.getObject()
         }
     }
 
@@ -54,7 +54,7 @@ public final class PBXProject: PBXObject {
             productsGroupReference = newValue?.reference
         }
         get {
-            return productsGroupReference?.getObject()
+            productsGroupReference?.getObject()
         }
     }
 
@@ -76,7 +76,7 @@ public final class PBXProject: PBXObject {
             }
         }
         get {
-            return projectReferences.map { project in
+            projectReferences.map { project in
                 project.mapValues { $0.getObject()! }
             }
         }
@@ -96,7 +96,7 @@ public final class PBXProject: PBXObject {
             targetReferences = newValue.references()
         }
         get {
-            return targetReferences.objects()
+            targetReferences.objects()
         }
     }
 
@@ -134,7 +134,7 @@ public final class PBXProject: PBXObject {
             packageReferences = newValue.references()
         }
         get {
-            return packageReferences?.objects() ?? []
+            packageReferences?.objects() ?? []
         }
     }
 
@@ -164,7 +164,7 @@ public final class PBXProject: PBXObject {
     /// - Parameter for: target whose attributes will be returned.
     /// - Returns: target attributes.
     public func attributes(for target: PBXTarget) -> [String: Any]? {
-        return targetAttributeReferences[target.reference]
+        targetAttributeReferences[target.reference]
     }
 
     /// Adds a remote swift package
@@ -477,7 +477,7 @@ extension PBXProject: PlistSerializable {
             .map { targetReference in
                 let target: PBXTarget? = targetReference.getObject()
                 return .string(CommentedString(targetReference.value, comment: target?.name))
-        })
+            })
 
         if !packages.isEmpty {
             dictionary["packageReferences"] = PlistValue.array(packages.map {
@@ -508,7 +508,8 @@ extension PBXProject: PlistSerializable {
             return nil
         }
         return .array(projectReferences.compactMap { reference in
-            guard let productGroupReference = reference["ProductGroup"], let projectRef = reference["ProjectRef"] else {
+            guard let productGroupReference = reference[Xcode.ProjectReference.productGroupKey],
+                let projectRef = reference[Xcode.ProjectReference.projectReferenceKey] else {
                 return nil
             }
             let producGroup: PBXGroup? = productGroupReference.getObject()
@@ -517,8 +518,8 @@ extension PBXProject: PlistSerializable {
             let fileRefName = project?.fileName()
 
             return [
-                CommentedString("ProductGroup"): PlistValue.string(CommentedString(productGroupReference.value, comment: groupName)),
-                CommentedString("ProjectRef"): PlistValue.string(CommentedString(projectRef.value, comment: fileRefName)),
+                CommentedString(Xcode.ProjectReference.productGroupKey): PlistValue.string(CommentedString(productGroupReference.value, comment: groupName)),
+                CommentedString(Xcode.ProjectReference.projectReferenceKey): PlistValue.string(CommentedString(projectRef.value, comment: fileRefName)),
             ]
         })
     }

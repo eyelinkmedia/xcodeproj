@@ -1,14 +1,74 @@
-🚀 Check out the guidelines [here](https://github.com/xcodeswift/contributors/blob/master/CHANGELOG_GUIDELINES.md)
+🚀 Check out the guidelines [here](https://tuist.io/docs/contribution/changelog-guidelines/)
 
 ## Next
+
+## 7.16.0 - Cieza
+
+### Added
+
+- Set the right `module_name` in the `.podspec.` [#578](https://github.com/tuist/XcodeProj/pull/578) by [@dflems](https://github.com/dflems).
+
+## 7.15.0 - Marea
+
+### Fixed
+
+- explicitFileType corrected for .bundle https://github.com/tuist/XcodeProj/pull/563 by @adamkhazi
+### Added
+- Added `runOncePerArchitecture` attribute to `PBXBuildRule` https://github.com/tuist/XcodeProj/pull/570 by @sascha
+
+### Added
+
+- Add support for alwaysOutOfDate flag in PBXShellScriptBuildPhase https://github.com/tuist/XcodeProj/pull/572 by @marciniwanicki
+- Added `PBXShellScriptBuildPhase.dependencyFile` attribute https://github.com/tuist/xcodeproj/pull/568 by @polac24
+- Add support for StoreKitConfigurationFileReference in LaunchAction of XCScheme https://github.com/tuist/XcodeProj/pull/573 by @jcolicchio
+
+## 7.14.0
+
+### Fixed
+
+- lastKnownFileType for .ttf and .sqlite files https://github.com/tuist/XcodeProj/pull/557 by @adamkhazi
+
+### Added
+
+- Added selectedTests attribute to XCScheme.TestableReference https://github.com/tuist/XcodeProj/pull/559 by @ooodin
+
+## 7.13.0
+
+### Added
+
+- Support `on-demand-install-capable` application https://github.com/tuist/XcodeProj/pull/554 by @d-date
+- Add RemotePath to RemoteRunnable https://github.com/tuist/XcodeProj/pull/555 by @kwridan
+
+## 7.12.0
+
+### Added
+
+- Added `LaunchAction.customLLDBInitFile` and `TestAction.customLLDBInitFile` attributes https://github.com/tuist/xcodeproj/pull/553 by @polac24
+
+## 7.11.1
+
+### Added
+
+- Added `platformFilter` to the `PBXTargetDependency` https://github.com/tuist/XcodeProj/pull/546 by @tomaslinhart
+
+## 7.11.0
 
 ### Changed
 
 - Point `XcodeProjCExt` to version 0.1.0 https://github.com/tuist/XcodeProj/pull/540 by @khoi
 
+### Added
+
+- Added `useTestSelectionWhitelist` attribute to `XCScheme.TestableReference` https://github.com/tuist/xcodeproj/pull/516 by @basvankuijck.
+
+### Fixed
+
+- "Products" group has the same ID for any project https://github.com/tuist/XcodeProj/issues/538 by @damirdavletov
+
 ## 7.10.0
 
 ### Changed
+
 - Optimize bottlenecks https://github.com/tuist/XcodeProj/pull/529 by @michaeleisel
 
 ## 7.9.0
