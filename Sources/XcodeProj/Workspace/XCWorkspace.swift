@@ -53,6 +53,15 @@ public final class XCWorkspace: Writable, Equatable {
     public func write(path: Path, override: Bool = true) throws {
         let dataPath = path + "contents.xcworkspacedata"
         if override, dataPath.exists {
+            if let existingContent: String = try? dataPath.read(),
+               existingContent == data.rawContents() {
+                // Raw data matches what's on disk
+                // there's no need to overwrite the contents
+                // this mitigates Xcode forcing users to
+                // close and re-open projects/workspaces
+                // on regeneration.
+                return
+            }
             try dataPath.delete()
         }
         try dataPath.mkpath()
@@ -62,6 +71,6 @@ public final class XCWorkspace: Writable, Equatable {
     // MARK: - Equatable
 
     public static func == (lhs: XCWorkspace, rhs: XCWorkspace) -> Bool {
-        return lhs.data == rhs.data
+        lhs.data == rhs.data
     }
 }

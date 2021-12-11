@@ -93,11 +93,11 @@ final class XCConfigIntegrationTests: XCTestCase {
     }
 
     private func childrenPath() -> Path {
-        return fixturesPath() + "XCConfigs/Children.xcconfig"
+        fixturesPath() + "XCConfigs/Children.xcconfig"
     }
 
     private func parentPath() -> Path {
-        return fixturesPath() + "XCConfigs/Parent.xcconfig"
+        fixturesPath() + "XCConfigs/Parent.xcconfig"
     }
 
     private func assert(config: XCConfig) {
@@ -110,5 +110,7 @@ final class XCConfigIntegrationTests: XCTestCase {
         XCTAssertEqual(config.includes.count, 1)
         XCTAssertEqual(config.flattenedBuildSettings()["OTHER_SWIFT_FLAGS_XCODE_0821"] as? String, "$(inherited)")
         XCTAssertEqual(config.flattenedBuildSettings()["OTHER_SWIFT_FLAGS_XCODE_0830"] as? String, "$(inherited) -enable-bridging-pch")
+        XCTAssertEqual(config.flattenedBuildSettings()["PRODUCT_NAME"] as? String, "$(TARGET_NAME)")
+        XCTAssertEqual(config.flattenedBuildSettings()["SWIFT_OPTIMIZATION_LEVEL"] as? String, "-Onone")
     }
 }

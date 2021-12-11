@@ -1,10 +1,180 @@
-🚀 Check out the guidelines [here](https://github.com/xcodeswift/contributors/blob/master/CHANGELOG_GUIDELINES.md)
+🚀 Check out the guidelines [here](https://tuist.io/docs/contribution/changelog-guidelines/)
 
 ## Next
+
+## 8.6.0
+### Added
+
+- Support for location added to test targets (`TestableReference`) [#654](https://github.com/tuist/XcodeProj/pull/654) by [@KrisRJack](https://github.com/KrisRJack)
+
+## 8.5.0
+
+### Added
+
+- Add XCSchemeManagement struct https://github.com/tuist/XcodeProj/pull/565 by @pepibumur.
+
+### Changed
+- Update the last-known and default constants to align with Xcode 13.
+ 
+## 8.4.0
+### Added
+
+- Support customized DerrivedData path in `WorkspaceSettings` [#650](https://github.com/tuist/XcodeProj/pull/650) by [@freddi-kit](https://github.com/freddi-kit).
+  
+### 8.3.1
+### Fixed
+
+- Fix Xcode 13 build [#648](https://github.com/tuist/XcodeProj/pull/648) by [@raptorxcz](https://github.com/raptorxcz)
+
+## 8.3.0 - Mojo
+### Added
+
+- `CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED` to default build setting [#641](https://github.com/tuist/XcodeProj/pull/641) by [@flowbe](https://github.com/flowbe)
+
+### Fixed
+
+- Xcode 13 build issues [#646](https://github.com/tuist/XcodeProj/pull/646) by [@jsorge](https://github.com/jsorge)
+
+## 8.2.0 - Bubbles
+### Added
+
+- Support obtaining the full path of a file element by passing the source root as a string [#624](https://github.com/tuist/XcodeProj/pull/624) by [@ileitch](https://github.com/ileitch).
+  
+### Fixed
+
+- If RemoteRunnable doesn't contains BuildableReference XcodeProj removes xcscheme file [#627](https://github.com/tuist/XcodeProj/pull/627) by [@subdan](https://github.com/subdan).
+
+### Changed
+
+- Updated AEXML to 4.6.1 [#632](https://github.com/tuist/XcodeProj/pull/632) by [@nnsnodnb](https://github.com/nnsnodnb).
+## 8.1.0 - Barcelona
+### Changed
+
+- Improve performance of commented string [#635](https://github.com/tuist/XcodeProj/pull/635) by [@adellibovi](https://github.com/adellibovi)
+
+## 8.0.0 - Amor
+### Fixed
+
+- Adding group set incorrect parent in case of complex path [#614](https://github.com/tuist/XcodeProj/pull/614) by [@avdyushin](https://github.com/avdyushin)
+- **Breaking** Fixed issue where some schemes could not be deserialized because a buildable reference did not contain a blueprint identifier [#612](https://github.com/tuist/XcodeProj/pull/612) by [@daltonclaybrook](https://github.com/daltonclaybrook)
+- Added the `com.apple.product-type.driver-extension` and `com.apple.product-type.system-extension` PBXProductType [#618](https://github.com/tuist/XcodeProj/pull/618) by [@vgorloff](https://github.com/vgorloff).
+
+### Changed
+
+- **Breaking** Make `runPostActionsOnFailure` optional [#619](https://github.com/tuist/XcodeProj/pull/619) by [@kwridan](https://github.com/kwridan)
+
+## 7.23.0 - Bonsai
+### Added
+
+- Allows passing BuildableIdentifier String to BuildableReference initializer [#605](https://github.com/tuist/XcodeProj/pull/605) by [@freddi-kit](https://github.com/freddi-kit)
+
+### Fixed
+
+- Fixed building on Linux [#615](https://github.com/tuist/XcodeProj/pull/615) by [@yonaskolb](https://github.com/yonaskolb)
+
+## 7.22.0 - Ringui Dingui
+
+### Added
+
+- `CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER` to default build setting [#608](https://github.com/tuist/XcodeProj/pull/608) by [@fortmarek](https://github.com/fortmarek)
+
+### Fixed
+
+- Prevent overwriting identical workspace data [#607](https://github.com/tuist/XcodeProj/pull/607) by [@ferologics](https://github.com/ferologics)
+
+## 7.21.0 - Alfredo
+
+### Changed
+
+- Speed up md5 generation [#606](https://github.com/tuist/XcodeProj/pull/606) by [@adellibovi](https://github.com/adellibovi)
+
+## 7.20.0 - Sol
+
+### Added
+
+- Added `runPostActionsOnFailure` to `XCScheme` [#603](https://github.com/tuist/XcodeProj/pull/603) by [@FranzBusch](https://github.com/FranzBusch)
+
+## 7.19.0 - Kreuzberg
+
+### Fixed
+
+- JSON decoder not properly decoding `defaultConfigurationIsVisible` in some projects [#593](https://github.com/tuist/XcodeProj/pull/593) by [@tjwio](https://github.com/tjwio)
+- JSON decoder not properly decoding `proxyType` in some projects [#596](https://github.com/tuist/XcodeProj/issues/596) by [@tjwio](https://github.com/tjwio)
+- BuildPhaseTests not handling failure cases properly [#597](https://github.com/tuist/XcodeProj/issues/597) by [@tjwio](https://github.com/tjwio)
+- `xcconfig` parser does not support inline comments [#602](https://github.com/tuist/XcodeProj/issues/602) by [@dive](https://github.com/dive)
+
+## 7.18.0 - Penguin
+
+### Added
+
+- Support for building and running on Linux. [#585](https://github.com/tuist/XcodeProj/pull/585) by [@elliottwilliams](https://github.com/elliottwilliams).
+- Tested for compatibility with Swift 5.3 on Ubuntu 18.04.
+- XcodeProj requires FoundationXML / libxml2, which is part of the standard Swift Linux toolchain but not necessarily available in all environments.
+
+## 7.17.0 - Tempelhof
+
+### Added
+
+- Added the `com.apple.product-type.metal-library` PBXProductType [#576](https://github.com/tuist/XcodeProj/pull/576) by [@deatondg](https://github.com/deatondg).
+- Deprecate PBXBuildPhase.type() function https://github.com/tuist/XcodeProj/pull/571 by [@marciniwanicki](https://github.com/marciniwanicki).
+- Added `runOncePerArchitecture` attribute to `PBXBuildRule` https://github.com/tuist/XcodeProj/pull/570 by @sascha
+
+## 7.16.0 - Cieza
+
+### Added
+
+- Set the right `module_name` in the `.podspec.` [#578](https://github.com/tuist/XcodeProj/pull/578) by [@dflems](https://github.com/dflems).
+
+## 7.15.0 - Marea
+
+### Fixed
+
+- explicitFileType corrected for .bundle https://github.com/tuist/XcodeProj/pull/563 by @adamkhazi
+
+### Added
+
+- Add support for alwaysOutOfDate flag in PBXShellScriptBuildPhase https://github.com/tuist/XcodeProj/pull/572 by @marciniwanicki
+- Added `PBXShellScriptBuildPhase.dependencyFile` attribute https://github.com/tuist/xcodeproj/pull/568 by @polac24
+- Add support for StoreKitConfigurationFileReference in LaunchAction of XCScheme https://github.com/tuist/XcodeProj/pull/573 by @jcolicchio
+
+## 7.14.0
+
+### Fixed
+
+- lastKnownFileType for .ttf and .sqlite files https://github.com/tuist/XcodeProj/pull/557 by @adamkhazi
+
+### Added
+
+- Added selectedTests attribute to XCScheme.TestableReference https://github.com/tuist/XcodeProj/pull/559 by @ooodin
+
+## 7.13.0
+
+### Added
+
+- Support `on-demand-install-capable` application https://github.com/tuist/XcodeProj/pull/554 by @d-date
+- Add RemotePath to RemoteRunnable https://github.com/tuist/XcodeProj/pull/555 by @kwridan
+
+## 7.12.0
+
+### Added
+
+- Added `LaunchAction.customLLDBInitFile` and `TestAction.customLLDBInitFile` attributes https://github.com/tuist/xcodeproj/pull/553 by @polac24
+
+## 7.11.1
+
+### Added
+
+- Added `platformFilter` to the `PBXTargetDependency` https://github.com/tuist/XcodeProj/pull/546 by @tomaslinhart
+
+## 7.11.0
 
 ### Changed
 
 - Point `XcodeProjCExt` to version 0.1.0 https://github.com/tuist/XcodeProj/pull/540 by @khoi
+
+### Added
+
+- Added `useTestSelectionWhitelist` attribute to `XCScheme.TestableReference` https://github.com/tuist/xcodeproj/pull/516 by @basvankuijck.
 
 ### Fixed
 
@@ -13,6 +183,7 @@
 ## 7.10.0
 
 ### Changed
+
 - Optimize bottlenecks https://github.com/tuist/XcodeProj/pull/529 by @michaeleisel
 
 ## 7.9.0

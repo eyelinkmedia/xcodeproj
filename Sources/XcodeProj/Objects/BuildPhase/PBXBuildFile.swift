@@ -10,7 +10,7 @@ public final class PBXBuildFile: PBXObject {
     /// Returns the file the build file refers to.
     public var file: PBXFileElement? {
         get {
-            return fileReference?.getObject()
+            fileReference?.getObject()
         }
         set {
             fileReference = newValue?.reference
@@ -23,7 +23,7 @@ public final class PBXBuildFile: PBXObject {
     /// Product.
     public var product: XCSwiftPackageProductDependency? {
         get {
-            return productReference?.getObject()
+            productReference?.getObject()
         }
         set {
             productReference = newValue?.reference
@@ -79,6 +79,11 @@ public final class PBXBuildFile: PBXObject {
         settings = try container.decodeIfPresent([String: Any].self, forKey: .settings)
         platformFilter = try container.decodeIfPresent(.platformFilter)
         try super.init(from: decoder)
+    }
+
+    override func isEqual(to object: Any?) -> Bool {
+        guard let rhs = object as? PBXBuildFile else { return false }
+        return isEqual(to: rhs)
     }
 }
 
@@ -143,7 +148,7 @@ extension PBXBuildFile {
 
 // Helper for serialize the BuildFile with associated BuildPhase
 final class PBXBuildPhaseFile: PlistSerializable, Equatable {
-    var multiline: Bool { return false }
+    var multiline: Bool { false }
 
     let buildFile: PBXBuildFile
     let buildPhase: PBXBuildPhase
@@ -175,6 +180,6 @@ final class PBXBuildPhaseFile: PlistSerializable, Equatable {
     }
 
     static func == (lhs: PBXBuildPhaseFile, rhs: PBXBuildPhaseFile) -> Bool {
-        return lhs.buildFile == rhs.buildFile && lhs.buildPhase == rhs.buildPhase
+        lhs.buildFile == rhs.buildFile && lhs.buildPhase == rhs.buildPhase
     }
 }

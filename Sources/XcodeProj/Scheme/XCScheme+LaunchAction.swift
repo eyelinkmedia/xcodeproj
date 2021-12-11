@@ -64,8 +64,10 @@ extension XCScheme {
         public var language: String?
         public var region: String?
         public var launchAutomaticallySubstyle: String?
+        public var storeKitConfigurationFileReference: StoreKitConfigurationFileReference?
         // To enable the option in Xcode: defaults write com.apple.dt.Xcode IDEDebuggerFeatureSetting 12
         public var customLaunchCommand: String?
+        public var customLLDBInitFile: String?
 
         // MARK: - Init
 
@@ -101,7 +103,9 @@ extension XCScheme {
                     language: String? = nil,
                     region: String? = nil,
                     launchAutomaticallySubstyle: String? = nil,
-                    customLaunchCommand: String? = nil) {
+                    storeKitConfigurationFileReference: StoreKitConfigurationFileReference? = nil,
+                    customLaunchCommand: String? = nil,
+                    customLLDBInitFile: String? = nil) {
             self.runnable = runnable
             self.macroExpansion = macroExpansion
             self.buildConfiguration = buildConfiguration
@@ -132,7 +136,9 @@ extension XCScheme {
             self.language = language
             self.region = region
             self.launchAutomaticallySubstyle = launchAutomaticallySubstyle
+            self.storeKitConfigurationFileReference = storeKitConfigurationFileReference
             self.customLaunchCommand = customLaunchCommand
+            self.customLLDBInitFile = customLLDBInitFile
             super.init(preActions, postActions)
         }
 
@@ -142,7 +148,7 @@ extension XCScheme {
             selectedDebuggerIdentifier = element.attributes["selectedDebuggerIdentifier"] ?? XCScheme.defaultDebugger
             selectedLauncherIdentifier = element.attributes["selectedLauncherIdentifier"] ?? XCScheme.defaultLauncher
             launchStyle = element.attributes["launchStyle"].flatMap { Style(rawValue: $0) } ?? .auto
-            askForAppToLaunch = element.attributes["askForAppToLaunch"].map { $0 == "YES" }
+            askForAppToLaunch = element.attributes["askForAppToLaunch"].map { $0 == "YES" || $0 == "Yes" }
             useCustomWorkingDirectory = element.attributes["useCustomWorkingDirectory"] == "YES"
             ignoresPersistentStateOnLaunch = element.attributes["ignoresPersistentStateOnLaunch"] == "YES"
             debugDocumentVersioning = element.attributes["debugDocumentVersioning"].map { $0 == "YES" } ?? true
@@ -157,12 +163,12 @@ extension XCScheme {
             } else if remoteRunnableElement.error == nil {
                 runnable = try RemoteRunnable(element: remoteRunnableElement)
             }
-            
+
             let pathRunnable = element["PathRunnable"]
             if pathRunnable.error == nil {
                 self.pathRunnable = try PathRunnable(element: pathRunnable)
             }
-            
+
             let buildableReferenceElement = element["MacroExpansion"]["BuildableReference"]
             if buildableReferenceElement.error == nil {
                 macroExpansion = try BuildableReference(element: buildableReferenceElement)
@@ -204,7 +210,14 @@ extension XCScheme {
             language = element.attributes["language"]
             region = element.attributes["region"]
             launchAutomaticallySubstyle = element.attributes["launchAutomaticallySubstyle"]
+
+            if element["StoreKitConfigurationFileReference"].all?.first != nil {
+                storeKitConfigurationFileReference = try StoreKitConfigurationFileReference(element: element["StoreKitConfigurationFileReference"])
+            } else {
+                storeKitConfigurationFileReference = nil
+            }
             customLaunchCommand = element.attributes["customLaunchCommand"]
+            customLLDBInitFile = element.attributes["customLLDBInitFile"]
 
             try super.init(element: element)
         }
@@ -269,7 +282,7 @@ extension XCScheme {
             if let runnable = runnable {
                 element.addChild(runnable.xmlElement())
             }
-            
+
             if let pathRunnable = pathRunnable {
                 element.addChild(pathRunnable.xmlElement())
             }
@@ -302,8 +315,16 @@ extension XCScheme {
                 element.attributes["launchAutomaticallySubstyle"] = launchAutomaticallySubstyle
             }
 
+            if let storeKitConfigurationFileReference = storeKitConfigurationFileReference {
+                element.addChild(storeKitConfigurationFileReference.xmlElement())
+            }
+
             if let customLaunchCommand = customLaunchCommand {
                 element.attributes["customLaunchCommand"] = customLaunchCommand
+            }
+
+            if let customLLDBInitFile = customLLDBInitFile {
+                element.attributes["customLLDBInitFile"] = customLLDBInitFile
             }
 
             if !additionalOptions.isEmpty {
@@ -351,7 +372,9 @@ extension XCScheme {
                 language == rhs.language &&
                 region == rhs.region &&
                 launchAutomaticallySubstyle == rhs.launchAutomaticallySubstyle &&
-                customLaunchCommand == rhs.customLaunchCommand
+                storeKitConfigurationFileReference == rhs.storeKitConfigurationFileReference &&
+                customLaunchCommand == rhs.customLaunchCommand &&
+                customLLDBInitFile == rhs.customLLDBInitFile
         }
     }
 }

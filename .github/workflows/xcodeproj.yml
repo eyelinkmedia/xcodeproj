@@ -1,0 +1,66 @@
+# https://help.github.com/en/github/automating-your-workflow-with-github-actions/workflow-syntax-for-github-actions#jobsjob_idname
+name: XcodeProj
+
+on: [push, pull_request]
+
+concurrency:
+  group: xcodeproj-${{ github.head_ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Build (macOS)
+    runs-on: macos-11
+    strategy:
+      matrix:
+        xcode: ["12.4", "12.5", "13.0"]
+    steps:
+      - uses: actions/checkout@v1
+      - name: Select Xcode ${{ matrix.xcode }}
+        run: sudo xcode-select -switch /Applications/Xcode_${{ matrix.xcode }}.app
+      - name: Build
+        run: swift build -c release
+  build-linux:
+    name: Build (Linux)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - name: Build
+        run: swift build -c release
+  test:
+    name: Test (macOS)
+    runs-on: macos-11
+    strategy:
+      matrix:
+        xcode: ["12.4", "12.5", "13.0"]
+    steps:
+      - uses: actions/checkout@v1
+      - name: Select Xcode ${{ matrix.xcode }}
+        run: sudo xcode-select -switch /Applications/Xcode_${{ matrix.xcode }}.app
+      - name: Generate project
+        run: swift package generate-xcodeproj
+      - name: Run tests
+        run: xcodebuild test -project XcodeProj.xcodeproj -scheme XcodeProj-Package -enableCodeCoverage YES
+      - name: Send test coverage report
+        run: bash <(curl -s https://codecov.io/bash)
+  test-linux:
+    name: Test (Linux)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - name: Set Git config
+        run: |
+          git config --global user.email "xcodeproj@tuist.io"
+          git config --global user.name "xcodeproj"
+          git config --global init.defaultBranch main
+      - name: Build and run tests
+        run: swift test --enable-test-discovery
+  swiftlint:
+    name: Swiftlint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - name: GitHub Action for SwiftLint
+        uses: pepibumur/action-swiftlint@0d4afd006bb24e4525b5afcefd4ab5e2537193ac
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

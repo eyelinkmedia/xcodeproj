@@ -7,41 +7,41 @@ public struct Xcode {
         /// Last known SDKs.
         public struct SDK {
             /// Last known SDK for iOS.
-            public static let ios: String = "12.0"
+            public static let ios: String = "14.0"
 
             /// Last known SDK for macOS.
-            public static let macos: String = "10.14"
+            public static let macos: String = "10.15"
 
             /// Last known SDK for tvOS.
-            public static let tvos: String = "12.0"
+            public static let tvos: String = "14.0"
 
             /// Last known SDK for watchos.
-            public static let watchos: String = "5.0"
+            public static let watchos: String = "7.0"
         }
 
         /// Last known archive version for Xcodeproj.
         public static let archiveVersion: UInt = 1
 
         /// Last known Swift version (stable).
-        public static let swiftVersion = "4.2"
+        public static let swiftVersion = "5.4.2"
 
         /// Last known object version for Xcodeproj.
-        public static let objectVersion: UInt = 51
+        public static let objectVersion: UInt = 55
 
         /// Last known upgrade check.
-        public static let upgradeCheck = "1000"
+        public static let upgradeCheck = "1240"
 
         /// Last known Swift upgrade check.
-        public static let swiftUpgradeCheck = "1000"
+        public static let swiftUpgradeCheck = "1240"
     }
 
     /// Default values.
     public struct Default {
         /// The default object version for Xcodeproj.
-        public static let objectVersion: UInt = 52 // Xcode 11
+        public static let objectVersion: UInt = 46
 
         /// Default compatibility version.
-        public static let compatibilityVersion: String = "Xcode 9.3"
+        public static let compatibilityVersion: String = "Xcode 13.0"
 
         /// Default development region.
         public static let developmentRegion: String = "en"
@@ -64,7 +64,7 @@ public struct Xcode {
     /// - Parameter extension: file extension.
     /// - Returns: Xcode file type.
     public static func filetype(extension: String) -> String? {
-        return allExtensions[`extension`]
+        allExtensions[`extension`]
     }
 
     // Derived from Xcode3Core.ideplugin in Xcode 11.1
@@ -102,7 +102,7 @@ public struct Xcode {
         "avi": "video.avi",
         "bin": "archive.macbinary",
         "bmp": "image.bmp",
-        "bundle": "wrapper.plug-in",
+        "bundle": "wrapper.cfbundle",
         "c": "sourcecode.c.c",
         "c++": "sourcecode.cpp.cpp",
         "cc": "sourcecode.cpp.cpp",
@@ -271,6 +271,7 @@ public struct Xcode {
         "sit": "archive.stuffit",
         "sks": "file.sks",
         "skybox": "file.skybox",
+        "sqlite": "file",
         "storyboard": "file.storyboard",
         "storyboardc": "wrapper.storyboardc",
         "strings": "text.plist.strings",
@@ -283,6 +284,7 @@ public struct Xcode {
         "text": "net.daringfireball.markdown",
         "tif": "image.tiff",
         "tiff": "image.tiff",
+        "ttf": "file",
         "txt": "text",
         "uicatalog": "file.uicatalog",
         "usdz": "file.usdz",

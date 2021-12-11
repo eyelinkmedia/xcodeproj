@@ -13,6 +13,7 @@ let attributesOrder: [String: [String]] = [
     "BuildAction": [
         "parallelizeBuildables",
         "buildImplicitDependencies",
+        "runPostActionsOnFailure",
     ],
     "BuildActionEntry": [
         "buildForTesting",
@@ -52,6 +53,7 @@ let attributesOrder: [String: [String]] = [
         "enableGPUFrameCaptureMode",
         "enableGPUValidationMode",
         "allowLocationSimulation",
+        "storeKitConfigurationFileReference",
     ],
     "ProfileAction": [
         "buildConfiguration",
@@ -107,7 +109,7 @@ extension AEXMLElement {
         if !attributes.isEmpty {
             // insert known attributes in the specified order.
             var attributes = self.attributes
-            for key in attributesOrder[self.name] ?? [] {
+            for key in attributesOrder[name] ?? [] {
                 if let value = attributes.removeValue(forKey: key) {
                     print(key: key, value: value)
                 }

@@ -12,7 +12,7 @@ public final class XCWorkspaceData {
 
 extension XCWorkspaceData: Equatable {
     public static func == (lhs: XCWorkspaceData, rhs: XCWorkspaceData) -> Bool {
-        return lhs.children == rhs.children
+        lhs.children == rhs.children
     }
 }
 
@@ -36,20 +36,24 @@ extension XCWorkspaceData: Writable {
 
         self.init(children: children)
     }
-
-    // MARK: - <Writable>
-
-    public func write(path: Path, override: Bool = true) throws {
+    
+    func rawContents() -> String {
         let document = AEXMLDocument()
         let workspace = document.addChild(name: "Workspace", value: nil, attributes: ["version": "1.0"])
         _ = children
             .map { $0.xmlElement() }
             .map(workspace.addChild)
+        return document.xmlXcodeFormat
+    }
 
+    // MARK: - <Writable>
+    
+    public func write(path: Path, override: Bool = true) throws {
+        let rawXml = rawContents()
         if override, path.exists {
             try path.delete()
         }
-        try path.write(document.xmlXcodeFormat)
+        try path.write(rawXml)
     }
 }
 
@@ -130,8 +134,8 @@ private extension XCWorkspaceDataFileRef {
     }
 
     func xmlElement() -> AEXMLElement {
-        return AEXMLElement(name: "FileRef",
-                            value: nil,
-                            attributes: ["location": location.description])
+        AEXMLElement(name: "FileRef",
+                     value: nil,
+                     attributes: ["location": location.description])
     }
 }

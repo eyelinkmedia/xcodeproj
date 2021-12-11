@@ -13,7 +13,7 @@ public class PBXGroup: PBXFileElement {
             childrenReferences = newValue.references()
         }
         get {
-            return childrenReferences.objects()
+            childrenReferences.objects()
         }
     }
 
@@ -80,6 +80,11 @@ public class PBXGroup: PBXFileElement {
                                      comment: name ?? path),
                 value: .dictionary(dictionary))
     }
+
+    override func isEqual(to object: Any?) -> Bool {
+        guard let rhs = object as? PBXGroup else { return false }
+        return isEqual(to: rhs)
+    }
 }
 
 // MARK: - Helpers
@@ -106,7 +111,7 @@ public extension PBXGroup {
     /// - Parameter groupName: group name.
     /// - Returns: group with the given name contained in the given parent group.
     func group(named name: String) -> PBXGroup? {
-        return childrenReferences
+        childrenReferences
             .objects()
             .first(where: { $0.name == name })
     }
@@ -116,7 +121,7 @@ public extension PBXGroup {
     /// - Parameter name: file name.
     /// - Returns: file with the given name contained in the given parent group.
     func file(named name: String) -> PBXFileReference? {
-        return childrenReferences
+        childrenReferences
             .objects()
             .first(where: { $0.name == name })
     }
@@ -133,7 +138,7 @@ public extension PBXGroup {
         return groupName.components(separatedBy: "/").reduce(into: [PBXGroup]()) { groups, name in
             let group = groups.last ?? self
             let newGroup = PBXGroup(children: [], sourceTree: .group, name: name, path: options.contains(.withoutFolder) ? nil : name)
-            newGroup.parent = self
+            newGroup.parent = group
             group.childrenReferences.append(newGroup.reference)
             objects.add(object: newGroup)
             groups.append(newGroup)

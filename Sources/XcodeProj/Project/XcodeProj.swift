@@ -22,11 +22,9 @@ public final class XcodeProj: Equatable {
         var sharedData: XCSharedData?
 
         if !path.exists { throw XCodeProjError.notFound(path: path) }
-        let pbxprojPaths = path.glob("*.pbxproj")
-        if pbxprojPaths.isEmpty {
+        guard let pbxprojPath = path.glob("*.pbxproj").first else {
             throw XCodeProjError.pbxprojNotFound(path: path)
         }
-        let pbxprojPath = pbxprojPaths.first!
         let (pbxProjData, pbxProjDictionary) = try XcodeProj.readPBXProj(path: pbxprojPath)
         let context = ProjectDecodingContext(
             pbxProjValueReader: { key in
@@ -36,7 +34,7 @@ public final class XcodeProj: Equatable {
 
         let plistDecoder = XcodeprojPropertyListDecoder(context: context)
         pbxproj = try plistDecoder.decode(PBXProj.self, from: pbxProjData)
-        try pbxproj.updateProjectName(path: pbxprojPaths.first!)
+        try pbxproj.updateProjectName(path: pbxprojPath)
         let xcworkspacePaths = path.glob("*.xcworkspace")
         if xcworkspacePaths.isEmpty {
             workspace = XCWorkspace()
@@ -69,7 +67,7 @@ public final class XcodeProj: Equatable {
     // MARK: - Equatable
 
     public static func == (lhs: XcodeProj, rhs: XcodeProj) -> Bool {
-        return lhs.workspace == rhs.workspace &&
+        lhs.workspace == rhs.workspace &&
             lhs.pbxproj == rhs.pbxproj &&
             lhs.sharedData == rhs.sharedData
     }
@@ -121,7 +119,7 @@ extension XcodeProj: Writable {
     /// - Parameter path: `.xcodeproj` file path
     /// - Returns: worspace file path relative to the given path.
     public static func workspacePath(_ path: Path) -> Path {
-        return path + "project.xcworkspace"
+        path + "project.xcworkspace"
     }
 
     /// Writes workspace to the given path.
@@ -138,7 +136,7 @@ extension XcodeProj: Writable {
     /// - Parameter path: `.xcodeproj` file path
     /// - Returns: project file path relative to the given path.
     public static func pbxprojPath(_ path: Path) -> Path {
-        return path + "project.pbxproj"
+        path + "project.pbxproj"
     }
 
     /// Writes project to the given path.
@@ -156,7 +154,7 @@ extension XcodeProj: Writable {
     /// - Parameter path: `.xcodeproj` file path
     /// - Returns: shared data path relative to the given path.
     public static func sharedDataPath(_ path: Path) -> Path {
-        return path + "xcshareddata"
+        path + "xcshareddata"
     }
 
     /// Returns schemes folder path relative to the given path.
@@ -164,7 +162,7 @@ extension XcodeProj: Writable {
     /// - Parameter path: `.xcodeproj` file path
     /// - Returns: schemes folder path relative to the given path.
     public static func schemesPath(_ path: Path) -> Path {
-        return XcodeProj.sharedDataPath(path) + "xcschemes"
+        XcodeProj.sharedDataPath(path) + "xcschemes"
     }
 
     /// Returns scheme file path relative to the given path.
@@ -173,7 +171,7 @@ extension XcodeProj: Writable {
     /// - Parameter schemeName: scheme name
     /// - Returns: scheme file path relative to the given path.
     public static func schemePath(_ path: Path, schemeName: String) -> Path {
-        return XcodeProj.schemesPath(path) + "\(schemeName).xcscheme"
+        XcodeProj.schemesPath(path) + "\(schemeName).xcscheme"
     }
 
     /// Writes all project schemes to the given path.
@@ -201,7 +199,7 @@ extension XcodeProj: Writable {
     /// - Parameter schemeName: scheme name
     /// - Returns: debugger folder path relative to the given path.
     public static func debuggerPath(_ path: Path) -> Path {
-        return XcodeProj.sharedDataPath(path) + "xcdebugger"
+        XcodeProj.sharedDataPath(path) + "xcdebugger"
     }
 
     /// Returns breakpoints plist path relative to the given path.
@@ -210,7 +208,7 @@ extension XcodeProj: Writable {
     /// - Parameter schemeName: scheme name
     /// - Returns: breakpoints plist path relative to the given path.
     public static func breakPointsPath(_ path: Path) -> Path {
-        return XcodeProj.debuggerPath(path) + "Breakpoints_v2.xcbkptlist"
+        XcodeProj.debuggerPath(path) + "Breakpoints_v2.xcbkptlist"
     }
 
     /// Writes all project breakpoints to the given path.

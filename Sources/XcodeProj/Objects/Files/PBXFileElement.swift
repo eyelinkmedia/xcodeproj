@@ -93,7 +93,7 @@ public class PBXFileElement: PBXContainerItem, PlistSerializable {
 
     // MARK: - PlistSerializable
 
-    var multiline: Bool { return true }
+    var multiline: Bool { true }
 
     func plistKeyAndValue(proj _: PBXProj, reference: String) throws -> (key: CommentedString, value: PlistValue) {
         var dictionary: [CommentedString: PlistValue] = [:]
@@ -132,13 +132,27 @@ public class PBXFileElement: PBXContainerItem, PlistSerializable {
     ///
     /// - Returns: file name.
     func fileName() -> String? {
-        return name ?? path
+        name ?? path
+    }
+
+    override func isEqual(to object: Any?) -> Bool {
+        guard let rhs = object as? PBXFileElement else { return false }
+        return isEqual(to: rhs)
     }
 }
 
 // MARK: - Helpers
 
 public extension PBXFileElement {
+    /// Returns a file absolute path.
+    ///
+    /// - Parameter sourceRoot: project source root.
+    /// - Returns: file element absolute path.
+    /// - Throws: an error if the absolute path cannot be obtained.
+    func fullPath(sourceRoot: String) throws -> String? {
+        try fullPath(sourceRoot: Path(sourceRoot))?.absolute().string
+    }
+
     /// Returns a file absolute path.
     ///
     /// - Parameter sourceRoot: project source root.
@@ -185,7 +199,7 @@ public extension PBXFileElement {
     /// - Returns: path to the variant group base file.
     /// - Throws: an error if the path cannot be obtained.
     private func baseVariantGroupPath() throws -> String? {
-        guard let variantGroup: PBXVariantGroup = self.reference.getObject() else { return nil }
+        guard let variantGroup: PBXVariantGroup = reference.getObject() else { return nil }
         guard let baseReference = try variantGroup
             .childrenReferences
             .compactMap({ try $0.getThrowingObject() as PBXFileElement })

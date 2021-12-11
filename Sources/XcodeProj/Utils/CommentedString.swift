@@ -1,5 +1,4 @@
 import Foundation
-import XcodeProjCExt
 
 /// String that includes a comment
 struct CommentedString {
@@ -29,27 +28,43 @@ struct CommentedString {
         return invalidSet
     }()
 
-    /// Substrings that cause Xcode to quote the string content.
-    private let invalidStrings = [
-        "___",
-        "//",
-    ]
+    /// Set of characters that are invalid.
+    private static var specialCheckCharacters = CharacterSet(charactersIn: "_/")
 
     /// Returns a valid string for Xcode projects.
     var validString: String {
         switch string {
-        case "": return "".quoted
+        case "": return "\"\""
         case "false": return "NO"
         case "true": return "YES"
         default: break
         }
 
-        return string.withCString { buffer in
-            let esc = XCPEscapedString(buffer)!
-            let newString = String(cString: esc)
-            free(UnsafeMutableRawPointer(mutating: esc))
-            return newString
+        if string.rangeOfCharacter(from: CommentedString.invalidCharacters) == nil {
+            if string.rangeOfCharacter(from: CommentedString.specialCheckCharacters) == nil {
+                return string
+            } else if !string.contains("//") && !string.contains("___") {
+                return string
+            }
         }
+
+        let escaped = string.reduce(into: "") { escaped, character in
+            // As an optimization, only look at the first scalar. This means we're doing a numeric comparison instead
+            // of comparing arbitrary-length characters. This is safe because all our cases are a single scalar.
+            switch character.unicodeScalars.first {
+            case "\\":
+                escaped.append("\\\\")
+            case "\"":
+                escaped.append("\\\"")
+            case "\t":
+                escaped.append("\\t")
+            case "\n":
+                escaped.append("\\n")
+            default:
+                escaped.append(character)
+            }
+        }
+        return "\"\(escaped)\""
     }
 }
 
@@ -61,7 +76,7 @@ extension CommentedString: Hashable {
     }
 
     static func == (lhs: CommentedString, rhs: CommentedString) -> Bool {
-        return lhs.string == rhs.string && lhs.comment == rhs.comment
+        lhs.string == rhs.string && lhs.comment == rhs.comment
     }
 }
 
